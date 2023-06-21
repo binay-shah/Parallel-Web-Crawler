@@ -45,7 +45,7 @@ final class ProfilerImpl implements Profiler {
   }
 
   @Override
-  public <T> T wrap(Class<T> klass, T delegate) {
+  public <T> T wrap(Class<T> klass, T delegate) throws  IllegalArgumentException{
     Objects.requireNonNull(klass);
 
     // TODO: Use a dynamic proxy (java.lang.reflect.Proxy) to "wrap" the delegate in a

@@ -38,9 +38,8 @@ public final class CrawlResultWriter {
     Objects.requireNonNull(path);
     // TODO: Fill in this method.
     try(
-      Writer writer = Files.newBufferedWriter(path,  StandardOpenOption.CREATE,
-              StandardOpenOption.WRITE,
-              StandardOpenOption.APPEND)) {
+      Writer writer = Files.newBufferedWriter(path,  StandardOpenOption.CREATE
+              )) {
       write(writer);
     }catch (IOException e) {
       throw new RuntimeException(e);

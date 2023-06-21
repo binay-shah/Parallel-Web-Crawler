@@ -75,7 +75,7 @@ final class ParallelWebCrawler implements WebCrawler {
     return Runtime.getRuntime().availableProcessors();
   }
 
-   private class WebCrawlerTask extends RecursiveTask {
+   private class WebCrawlerTask extends RecursiveAction {
 
     private Instant deadline;
     private ConcurrentMap<String, Integer> counts;
@@ -99,21 +99,22 @@ final class ParallelWebCrawler implements WebCrawler {
     }
 
     @Override
-    protected Map<String, Integer> compute() {
+    protected void compute() {
       if (maxDepth == 0 || clock.instant().isAfter(deadline)) {
-        return Collections.emptyMap();
+        return ;
       }
       for (Pattern pattern : ignoredUrls) {
         if (pattern.matcher(url).matches()) {
-          return Collections.emptyMap();
+          return ;
         }
       }
-      if (visitedUrls.contains(url)) {
-        return Collections.emptyMap();
+      if (!visitedUrls.add(url)) {
+        return ;
       }
-      visitedUrls.add(url);
+
       PageParser.Result result = parserFactory.get(url).parse();
       for (Map.Entry<String, Integer> e : result.getWordCounts().entrySet()) {
+
         if (counts.containsKey(e.getKey())) {
           //counts.compute(e.getKey(), (k, v) -> (v == null) ? 1 : v + 1);
           counts.put(e.getKey(), e.getValue() + counts.get(e.getKey()));
@@ -127,7 +128,7 @@ final class ParallelWebCrawler implements WebCrawler {
                       .collect(Collectors.toList());
       invokeAll(subtasks);
 
-      return counts;
+
     }
   }
 }
